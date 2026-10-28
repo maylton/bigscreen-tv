@@ -12,7 +12,7 @@ android {
         targetSdk = 36
         versionCode = 2
         versionName = "0.2.0"
-        buildConfigField("String", "UPDATE_URL", "\"https://api.github.com/repos/maylton/caelestia-bigscreen-tv/releases/latest\"")
+        buildConfigField("String", "UPDATE_URL", "\"https://api.github.com/repos/maylton/bigscreen-tv/releases/latest\"")
     }
 
     buildFeatures {
