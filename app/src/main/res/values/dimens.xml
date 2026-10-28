@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Designed for the 960x540 dp canvas of a 1080p TV; 48/27 dp are the overscan-safe margins -->
+<resources>
+    <dimen name="safe_horizontal">48dp</dimen>
+    <dimen name="safe_vertical">27dp</dimen>
+    <dimen name="card_width">208dp</dimen>
+    <dimen name="card_height">117dp</dimen>
+    <dimen name="card_radius">12dp</dimen>
+    <dimen name="card_spacing">16dp</dimen>
+    <dimen name="row_vertical_padding">14dp</dimen>
+</resources>

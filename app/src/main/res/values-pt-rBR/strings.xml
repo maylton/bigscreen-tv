@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Big Screen</string>
+
+    <string name="row_continue">Continuar</string>
+    <string name="row_favorites">Favoritos</string>
+    <string name="row_apps">Apps</string>
+    <string name="row_games">Jogos</string>
+    <string name="row_settings">Configurações</string>
+
+    <string name="search">Buscar</string>
+    <string name="search_hint">Buscar apps e jogos</string>
+    <string name="search_empty">Nada encontrado</string>
+
+    <string name="option_open">Abrir</string>
+    <string name="option_favorite_add">Adicionar aos favoritos</string>
+    <string name="option_favorite_remove">Remover dos favoritos</string>
+    <string name="option_hide">Ocultar</string>
+    <string name="option_info">Informações do app</string>
+    <string name="option_uninstall">Desinstalar</string>
+    <string name="hidden_toast">%1$s foi ocultado. As configurações do Big Screen mostram de novo.</string>
+    <string name="open_failed">Não foi possível abrir %1$s</string>
+
+    <string name="shortcut_wifi">Wi-Fi</string>
+    <string name="shortcut_bluetooth">Controles remotos e acessórios</string>
+    <string name="shortcut_display">Tela e som</string>
+    <string name="shortcut_apps">Apps</string>
+    <string name="shortcut_storage">Armazenamento</string>
+    <string name="shortcut_date">Data e hora</string>
+    <string name="shortcut_accessibility">Acessibilidade</string>
+    <string name="shortcut_about">Sobre</string>
+    <string name="shortcut_android">Configurações do Android</string>
+    <string name="shortcut_bigscreen">Configurações do Big Screen</string>
+
+    <string name="settings_title">Configurações do Big Screen</string>
+    <string name="settings_default">Usar o Big Screen como tela inicial</string>
+    <string name="settings_default_summary">Como substituir a tela inicial do Google TV</string>
+    <string name="settings_hidden">Apps ocultos</string>
+    <string name="settings_hidden_summary">%1$d ocultos</string>
+    <string name="settings_hidden_none">Nenhum app oculto</string>
+    <string name="settings_hidden_pick">Escolha um app para mostrar de novo</string>
+    <string name="settings_android">Configurações do Android</string>
+    <string name="settings_about">Sobre</string>
+    <string name="settings_about_summary">Versão %1$s</string>
+    <string name="default_title">Usar o Big Screen como tela inicial</string>
+    <string name="default_text">O Google TV não permite escolher outra tela inicial nas configurações. Ative as opções do desenvolvedor e a depuração pela rede na TV e rode estes comandos num computador com adb:\n\nadb connect IP_DA_TV\nadb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx\nadb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith\n\nSe o segundo comando disser \"Unknown package\", o aparelho não tem esse pacote e não é preciso fazer mais nada. Depois disso, o botão Home abre o Big Screen. Para voltar ao Google TV:\n\nadb shell pm enable com.google.android.apps.tv.launcherx\nadb shell pm enable com.google.android.tungsten.setupwraith\n\nNo Android TV sem Google TV, apertar Home normalmente já deixa escolher o Big Screen.</string>
+    <string name="ok">OK</string>
+</resources>

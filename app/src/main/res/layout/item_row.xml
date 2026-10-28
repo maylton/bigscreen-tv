@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingTop="10dp"
+        android:textColor="@color/on_surface"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <io.github.maylton.bigscreen.tv.RowView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingStart="@dimen/safe_horizontal"
+        android:paddingTop="@dimen/row_vertical_padding"
+        android:paddingEnd="@dimen/safe_horizontal"
+        android:paddingBottom="@dimen/row_vertical_padding" />
+</LinearLayout>
