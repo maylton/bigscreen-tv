@@ -15,12 +15,12 @@ It is a simpler, faster alternative to the stock Google TV home.
 
 ## Install
 
-Download the APK from the releases page and install it with adb (or any
+Download the APK from the [releases page](https://github.com/maylton/bigscreen-tv/releases/latest) and install it with adb (or any
 sideloading app):
 
 ```sh
 adb connect TV_IP
-adb install big-screen.apk
+adb install bigscreen-tv.apk
 ```
 
 ## Make it the home screen
