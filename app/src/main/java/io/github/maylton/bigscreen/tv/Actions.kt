@@ -36,12 +36,13 @@ object Actions {
         }
     }
 
-    fun options(activity: Activity, entry: AppEntry, onChanged: () -> Unit) {
+    fun options(activity: Activity, entry: AppEntry, onMove: (() -> Unit)? = null, onChanged: () -> Unit) {
         val prefs = Prefs(activity)
         val packageUri = Uri.fromParts("package", entry.packageName, null)
         val removable = entry.activity.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM == 0
         val items = buildList<Pair<Int, () -> Unit>> {
             add(R.string.option_open to { launch(activity, entry) })
+            if (onMove != null) add(R.string.option_move to onMove)
             val favorite = entry.packageName in prefs.favorites
             add((if (favorite) R.string.option_favorite_remove else R.string.option_favorite_add) to {
                 prefs.toggleFavorite(entry.packageName)

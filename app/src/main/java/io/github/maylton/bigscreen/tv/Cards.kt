@@ -25,7 +25,8 @@ sealed class Card {
     }
 }
 
-class Row(val title: String, val cards: List<Card>)
+/** [movable] rows let the user reorder their cards. */
+class Row(val id: String, val title: String, val cards: List<Card>, val movable: Boolean = false)
 
 interface CardListener {
     fun onCardClick(card: Card)
@@ -33,8 +34,24 @@ interface CardListener {
     fun onCardFocus(card: Card, view: View) {}
 }
 
-class CardAdapter(private val cards: List<Card>, private val listener: CardListener) :
+class CardAdapter(cards: List<Card>, private val listener: CardListener) :
     RecyclerView.Adapter<CardAdapter.Holder>() {
+
+    private val cards = cards.toMutableList()
+    val items: List<Card> get() = cards
+
+    /** Card being moved: highlighted, with arrows around its name. */
+    var movingKey: String? = null
+        set(value) {
+            val changed = cards.indexOfFirst { it.key == (value ?: field) }
+            field = value
+            if (changed >= 0) notifyItemChanged(changed)
+        }
+
+    fun move(from: Int, to: Int) {
+        java.util.Collections.swap(cards, from, to)
+        notifyItemMoved(from, to)
+    }
 
     class Holder(view: View) : RecyclerView.ViewHolder(view) {
         val card: FrameLayout = view.findViewById(R.id.card)
@@ -65,9 +82,11 @@ class CardAdapter(private val cards: List<Card>, private val listener: CardListe
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val context = holder.itemView.context
-        when (val card = cards[position]) {
+        val card = cards[position]
+        holder.card.isActivated = card.key == movingKey
+        when (card) {
             is Card.App -> {
-                holder.label.text = card.entry.label
+                holder.label.text = if (card.key == movingKey) "◀  ${card.entry.label}  ▶" else card.entry.label
                 holder.icon.imageTintList = null
                 Art.bind(context, card.entry, holder.banner, holder.icon)
             }

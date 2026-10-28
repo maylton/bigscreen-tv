@@ -15,6 +15,8 @@
     <string name="option_open">Abrir</string>
     <string name="option_favorite_add">Adicionar aos favoritos</string>
     <string name="option_favorite_remove">Remover dos favoritos</string>
+    <string name="option_move">Mover</string>
+    <string name="move_hint">Use ◀ ▶ para mover, OK para terminar</string>
     <string name="option_hide">Ocultar</string>
     <string name="option_info">Informações do app</string>
     <string name="option_uninstall">Desinstalar</string>
@@ -33,6 +35,11 @@
     <string name="shortcut_bigscreen">Configurações do Big Screen</string>
 
     <string name="settings_title">Configurações do Big Screen</string>
+    <string name="home_service_description">Abre o Big Screen quando você aperta o botão Home. O Big Screen só vê o botão Home e qual app está aberto, nunca o que aparece na tela.</string>
+    <string name="settings_home">Botão Home abre o Big Screen</string>
+    <string name="settings_home_on">Ativado</string>
+    <string name="settings_home_off">Desativado: selecione para ativar o Big Screen em Acessibilidade</string>
+    <string name="settings_home_default">O Big Screen já é a tela inicial</string>
     <string name="settings_default">Usar o Big Screen como tela inicial</string>
     <string name="settings_default_summary">Como substituir a tela inicial do Google TV</string>
     <string name="settings_hidden">Apps ocultos</string>
@@ -40,9 +47,17 @@
     <string name="settings_hidden_none">Nenhum app oculto</string>
     <string name="settings_hidden_pick">Escolha um app para mostrar de novo</string>
     <string name="settings_android">Configurações do Android</string>
-    <string name="settings_about">Sobre</string>
+    <string name="settings_update">Procurar atualizações</string>
+    <string name="update_checking">Procurando atualizações…</string>
+    <string name="update_latest">Você já tem a versão mais recente</string>
+    <string name="update_title">Big Screen %1$s disponível</string>
+    <string name="update_now">Atualizar</string>
+    <string name="update_later">Depois</string>
+    <string name="update_downloading">Baixando a atualização… %1$d%%</string>
+    <string name="update_failed">Falha ao atualizar: %1$s</string>
+    <string name="update_permission">Permita que o Big Screen instale apps e volte para concluir a atualização</string>
     <string name="settings_about_summary">Versão %1$s</string>
     <string name="default_title">Usar o Big Screen como tela inicial</string>
-    <string name="default_text">O Google TV não permite escolher outra tela inicial nas configurações. Ative as opções do desenvolvedor e a depuração pela rede na TV e rode estes comandos num computador com adb:\n\nadb connect IP_DA_TV\nadb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx\nadb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith\n\nSe o segundo comando disser \"Unknown package\", o aparelho não tem esse pacote e não é preciso fazer mais nada. Depois disso, o botão Home abre o Big Screen. Para voltar ao Google TV:\n\nadb shell pm enable com.google.android.apps.tv.launcherx\nadb shell pm enable com.google.android.tungsten.setupwraith\n\nNo Android TV sem Google TV, apertar Home normalmente já deixa escolher o Big Screen.</string>
+    <string name="default_text">Jeito mais fácil: ative \"Botão Home abre o Big Screen\" nas configurações do Big Screen, que abre a Acessibilidade do Android, e ative o Big Screen lá. Depois disso, o botão Home abre o Big Screen.\n\nPara substituir a tela inicial do Google TV por completo, ative as opções do desenvolvedor e a depuração pela rede na TV e rode estes comandos num computador com adb:\n\nadb connect IP_DA_TV\nadb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx\nadb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith\n\nSe o segundo comando disser \"Unknown package\", o aparelho não tem esse pacote e não é preciso fazer mais nada. Para voltar ao Google TV:\n\nadb shell pm enable com.google.android.apps.tv.launcherx\nadb shell pm enable com.google.android.tungsten.setupwraith\n\nNo Android TV sem Google TV, apertar Home normalmente já deixa escolher o Big Screen.</string>
     <string name="ok">OK</string>
 </resources>

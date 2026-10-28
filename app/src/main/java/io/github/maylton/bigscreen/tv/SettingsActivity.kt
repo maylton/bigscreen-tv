@@ -24,11 +24,20 @@ class SettingsActivity : Activity() {
     override fun onResume() {
         super.onResume()
         build()
+        Updates.resume(this)
     }
 
     private fun build() {
         list.removeViews(1, list.childCount - 1)  // keep the title
         val hidden = Prefs(this).hidden
+        val homeSummary = when {
+            HomeButtonService.isDefaultHome(this) -> getString(R.string.settings_home_default)
+            HomeButtonService.isEnabled(this) -> getString(R.string.settings_home_on)
+            else -> getString(R.string.settings_home_off)
+        }
+        add(R.drawable.ic_accessibility, getString(R.string.settings_home), homeSummary) {
+            Actions.open(this, Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
         add(R.drawable.ic_display, getString(R.string.settings_default), getString(R.string.settings_default_summary)) {
             AlertDialog.Builder(this)
                 .setTitle(R.string.default_title)
@@ -42,8 +51,17 @@ class SettingsActivity : Activity() {
         add(R.drawable.ic_settings, getString(R.string.settings_android), null) {
             Actions.open(this, Intent(Settings.ACTION_SETTINGS))
         }
-        val version = packageManager.getPackageInfo(packageName, 0).versionName
-        add(R.drawable.ic_info, getString(R.string.settings_about), getString(R.string.settings_about_summary, version)) {}
+        val version = Updates.currentVersion(this)
+        add(R.drawable.ic_storage, getString(R.string.settings_update), getString(R.string.settings_about_summary, version)) {
+            Toast.makeText(this, R.string.update_checking, Toast.LENGTH_SHORT).show()
+            Updates.check(this) { release, error ->
+                when {
+                    release != null -> Updates.offer(this, release)
+                    error != null -> Toast.makeText(this, getString(R.string.update_failed, error.message.orEmpty()), Toast.LENGTH_LONG).show()
+                    else -> Toast.makeText(this, R.string.update_latest, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         list.getChildAt(1).requestFocus()
     }
 

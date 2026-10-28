@@ -7,7 +7,8 @@ It is a simpler, faster alternative to the stock Google TV home.
 - Rows for recent games, favorites, apps and games, with the apps' TV banners
 - Shortcuts to the Android TV settings: Wi-Fi, remotes and accessories,
   display and sound, apps, storage and more
-- Search, favorites and hidden apps
+- Search, favorites and hidden apps; reorder apps and favorites
+- Updates itself from the GitHub releases
 - Works with the remote and with gamepads
 - Android 9 or newer, about 400 KB
 - English and Brazilian Portuguese
@@ -24,7 +25,13 @@ adb install big-screen.apk
 
 ## Make it the home screen
 
-Google TV does not let you pick another home screen in its settings. With adb:
+Google TV does not let you pick another home screen in its settings. The
+easiest way is to turn on **Big Screen** in Settings → System → Accessibility:
+the Home button then opens Big Screen. On Android 13 and newer, if the switch is
+greyed out, first open App info for Big Screen and choose "Allow restricted
+settings".
+
+Or, with adb, replace the Google TV home for good:
 
 ```sh
 adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx

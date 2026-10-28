@@ -14,6 +14,17 @@ class Prefs(context: Context) {
 
     fun toggleHidden(packageName: String) = toggle(HIDDEN, packageName)
 
+    var lastUpdateCheck: Long
+        get() = prefs.getLong("last_update_check", 0)
+        set(value) = prefs.edit().putLong("last_update_check", value).apply()
+
+    fun saveFavorites(packages: List<String>) = save(FAVORITES, packages)
+
+    /** Custom order of a row, set by moving cards; apps installed later go after these. */
+    fun order(row: String) = list("order_$row")
+
+    fun saveOrder(row: String, packages: List<String>) = save("order_$row", packages)
+
     fun pushRecent(packageName: String) =
         save(RECENTS, (listOf(packageName) + recents.filter { it != packageName }).take(MAX_RECENTS))
 

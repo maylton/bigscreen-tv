@@ -34,7 +34,10 @@ class HomeActivity : Activity(), CardListener {
     private lateinit var prefs: Prefs
     private val handler = Handler(Looper.getMainLooper())
     private var signature = ""
+    private var rowList = emptyList<Row>()
     private var focusedCard: Card? = null
+    private var focusedView: View? = null
+    private var moving: RowsAdapter.Holder? = null
     private var backdropKey: String? = null
     private var pendingShortcut: Shortcut? = null
 
@@ -110,6 +113,13 @@ class HomeActivity : Activity(), CardListener {
     override fun onResume() {
         super.onResume()
         reload()
+        Updates.resume(this)
+        // Looks for a new release at most once a day; errors (offline TV) are ignored here
+        val now = System.currentTimeMillis()
+        if (now - prefs.lastUpdateCheck > UPDATE_INTERVAL) {
+            prefs.lastUpdateCheck = now
+            Updates.check(this) { release, _ -> if (release != null && !isFinishing) Updates.offer(this, release) }
+        }
     }
 
     override fun onDestroy() {
@@ -124,6 +134,47 @@ class HomeActivity : Activity(), CardListener {
         goHome()
     }
 
+    /** While moving a card, left and right move it and every other key finishes. */
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val row = moving ?: return super.dispatchKeyEvent(event)
+        if (event.action != KeyEvent.ACTION_DOWN) return true
+        val adapter = row.list.adapter as CardAdapter
+        val from = adapter.items.indexOfFirst { it.key == adapter.movingKey }
+        val to = when (event.keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT -> from - 1
+            KeyEvent.KEYCODE_DPAD_RIGHT -> from + 1
+            KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_DPAD_DOWN -> return true
+            else -> return finishMove(row).let { true }
+        }
+        if (to in adapter.items.indices) {
+            adapter.move(from, to)
+            row.list.scrollToPosition(to)
+            row.list.post { row.list.findViewHolderForAdapterPosition(to)?.itemView?.findViewById<View>(R.id.card)?.requestFocus() }
+        }
+        return true
+    }
+
+    private fun startMove() {
+        val view = focusedView ?: return
+        val row = rows.findContainingViewHolder(view) as? RowsAdapter.Holder ?: return
+        val card = focusedCard ?: return
+        (row.list.adapter as CardAdapter).movingKey = card.key
+        moving = row
+        android.widget.Toast.makeText(this, R.string.move_hint, android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    private fun finishMove(row: RowsAdapter.Holder) {
+        moving = null
+        val adapter = row.list.adapter as CardAdapter
+        adapter.movingKey = null
+        val packages = adapter.items.map { it.key }
+        when (val id = rowList[row.bindingAdapterPosition].id) {
+            ROW_FAVORITES -> prefs.saveFavorites(packages)
+            else -> prefs.saveOrder(id, packages)
+        }
+        reload()
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> goHome()
@@ -134,9 +185,17 @@ class HomeActivity : Activity(), CardListener {
         return true
     }
 
-    private fun goHome() {
-        rows.scrollToPosition(0)
-        rows.post { rows.findViewHolderForAdapterPosition(0)?.itemView?.findViewById<View>(R.id.card)?.requestFocus() }
+    private fun goHome() = focusCard(0, 0)
+
+    private fun focusCard(rowIndex: Int, cardIndex: Int) {
+        rows.scrollToPosition(rowIndex)
+        rows.post {
+            val row = rows.findViewHolderForAdapterPosition(rowIndex) as? RowsAdapter.Holder ?: return@post
+            row.list.scrollToPosition(cardIndex)
+            row.list.post {
+                row.list.findViewHolderForAdapterPosition(cardIndex)?.itemView?.findViewById<View>(R.id.card)?.requestFocus()
+            }
+        }
     }
 
     private fun openSearch() = startActivity(Intent(this, SearchActivity::class.java))
@@ -149,24 +208,40 @@ class HomeActivity : Activity(), CardListener {
         val recents = prefs.recents
         val recentRank = { entry: AppEntry -> recents.indexOf(entry.packageName).let { if (it < 0) Int.MAX_VALUE else it } }
 
+        // Saved order first, then the rest in their default order
+        val arrange = { items: List<AppEntry>, row: String ->
+            val saved = prefs.order(row)
+            saved.mapNotNull { key -> items.find { it.packageName == key } } + items.filter { it.packageName !in saved }
+        }
+
         val list = buildList {
             // Continue lists only games; recently opened apps lead the Apps row instead
             val recentGames = recents.mapNotNull { byPackage[it] }.filter { it.isGame }
-            if (recentGames.isNotEmpty()) add(Row(getString(R.string.row_continue), recentGames.map(Card::App)))
+            if (recentGames.isNotEmpty()) add(Row(ROW_CONTINUE, getString(R.string.row_continue), recentGames.map(Card::App)))
             val favorites = prefs.favorites.mapNotNull { byPackage[it] }
-            if (favorites.isNotEmpty()) add(Row(getString(R.string.row_favorites), favorites.map(Card::App)))
-            add(Row(getString(R.string.row_apps), visible.filter { !it.isGame }.sortedBy(recentRank).map(Card::App)))
-            val games = visible.filter { it.isGame }
-            if (games.isNotEmpty()) add(Row(getString(R.string.row_games), games.map(Card::App)))
-            add(Row(getString(R.string.row_settings), Shortcuts.available(this@HomeActivity).map(Card::Action)))
+            if (favorites.isNotEmpty()) {
+                add(Row(ROW_FAVORITES, getString(R.string.row_favorites), favorites.map(Card::App), movable = true))
+            }
+            val apps = arrange(visible.filter { !it.isGame }.sortedBy(recentRank), ROW_APPS)
+            add(Row(ROW_APPS, getString(R.string.row_apps), apps.map(Card::App), movable = true))
+            val games = arrange(visible.filter { it.isGame }, ROW_GAMES)
+            if (games.isNotEmpty()) add(Row(ROW_GAMES, getString(R.string.row_games), games.map(Card::App), movable = true))
+            add(Row(ROW_SETTINGS, getString(R.string.row_settings), Shortcuts.available(this@HomeActivity).map(Card::Action)))
         }
         // Rebuilding the same rows would only move the focus away
-        val newSignature = list.joinToString("|") { row -> row.title + ":" + row.cards.joinToString(",") { it.key } }
+        val newSignature = list.joinToString("|") { row -> row.id + ":" + row.cards.joinToString(",") { it.key } }
         if (newSignature == signature) return
         val firstLoad = signature.isEmpty()
+        val previousRow = focusedView?.let { rows.findContainingViewHolder(it) }?.bindingAdapterPosition
+            ?.let { rowList.getOrNull(it)?.id }
         signature = newSignature
+        rowList = list
         rows.adapter = RowsAdapter(list, this)
-        if (firstLoad) goHome()
+        if (firstLoad) return goHome()
+        // Keep the focus on the same card (or at least the same row) after favoriting, hiding or moving
+        val rowIndex = list.indexOfFirst { it.id == previousRow }.takeIf { it >= 0 } ?: 0
+        val cardIndex = list[rowIndex].cards.indexOfFirst { it.key == focusedCard?.key }.coerceAtLeast(0)
+        focusCard(rowIndex, cardIndex)
     }
 
     override fun onCardClick(card: Card) {
@@ -194,11 +269,14 @@ class HomeActivity : Activity(), CardListener {
     }
 
     override fun onCardLongClick(card: Card) {
-        if (card is Card.App) Actions.options(this, card.entry) { reload() }
+        if (card !is Card.App) return
+        val row = focusedView?.let { rows.findContainingViewHolder(it) }?.bindingAdapterPosition?.let(rowList::getOrNull)
+        Actions.options(this, card.entry, onMove = if (row?.movable == true) ::startMove else null) { reload() }
     }
 
     override fun onCardFocus(card: Card, view: View) {
         focusedCard = card
+        focusedView = view
         rows.findContainingItemView(view)?.let { rows.smoothScrollBy(0, it.top - rows.paddingTop) }
         if (card is Card.App) {
             Art.load(this, card.entry) { setBackdrop(card.key, if (it.isBanner) it.drawable else null) }
@@ -226,6 +304,12 @@ class HomeActivity : Activity(), CardListener {
 
     companion object {
         private const val PERMISSION_REQUEST = 1
+        private const val UPDATE_INTERVAL = 24 * 60 * 60 * 1000L
+        private const val ROW_CONTINUE = "continue"
+        private const val ROW_FAVORITES = "favorites"
+        private const val ROW_APPS = "apps"
+        private const val ROW_GAMES = "games"
+        private const val ROW_SETTINGS = "settings"
     }
 
     private fun showNetwork(capabilities: NetworkCapabilities?) {

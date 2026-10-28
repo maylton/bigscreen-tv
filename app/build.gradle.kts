@@ -10,8 +10,13 @@ android {
         applicationId = "io.github.maylton.bigscreen.tv"
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
+        buildConfigField("String", "UPDATE_URL", "\"https://api.github.com/repos/maylton/caelestia-bigscreen-tv/releases/latest\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     // Release key kept outside the repository (see README); without it the release build is unsigned
@@ -28,6 +33,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Lets the update flow be tested against a local server
+            providers.gradleProperty("bigscreen.updateUrl").orNull?.let { buildConfigField("String", "UPDATE_URL", "\"$it\"") }
+        }
         release {
             signingConfig = signingConfigs.findByName("release")
             isMinifyEnabled = true

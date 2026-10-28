@@ -16,6 +16,8 @@
     <string name="option_open">Open</string>
     <string name="option_favorite_add">Add to favorites</string>
     <string name="option_favorite_remove">Remove from favorites</string>
+    <string name="option_move">Move</string>
+    <string name="move_hint">Use ◀ ▶ to move it, OK to finish</string>
     <string name="option_hide">Hide</string>
     <string name="option_info">App info</string>
     <string name="option_uninstall">Uninstall</string>
@@ -34,6 +36,11 @@
     <string name="shortcut_bigscreen">Big Screen settings</string>
 
     <string name="settings_title">Big Screen settings</string>
+    <string name="home_service_description">Opens Big Screen when you press the Home button. Big Screen only sees the Home button and which app is open, never what is on the screen.</string>
+    <string name="settings_home">Home button opens Big Screen</string>
+    <string name="settings_home_on">On</string>
+    <string name="settings_home_off">Off: select to turn on Big Screen in Accessibility</string>
+    <string name="settings_home_default">Big Screen is already the home screen</string>
     <string name="settings_default">Make Big Screen the home screen</string>
     <string name="settings_default_summary">How to replace the Google TV home screen</string>
     <string name="settings_hidden">Hidden apps</string>
@@ -41,9 +48,17 @@
     <string name="settings_hidden_none">No hidden apps</string>
     <string name="settings_hidden_pick">Select an app to show it again</string>
     <string name="settings_android">Android settings</string>
-    <string name="settings_about">About</string>
+    <string name="settings_update">Check for updates</string>
+    <string name="update_checking">Checking for updates…</string>
+    <string name="update_latest">You have the latest version</string>
+    <string name="update_title">Big Screen %1$s is available</string>
+    <string name="update_now">Update</string>
+    <string name="update_later">Later</string>
+    <string name="update_downloading">Downloading the update… %1$d%%</string>
+    <string name="update_failed">Update failed: %1$s</string>
+    <string name="update_permission">Allow Big Screen to install apps, then go back to finish the update</string>
     <string name="settings_about_summary">Version %1$s</string>
     <string name="default_title">Make Big Screen the home screen</string>
-    <string name="default_text">Google TV does not let you choose another home screen in its settings. Turn on developer options and network debugging on the TV, then run these commands from a computer with adb:\n\nadb connect TV_IP\nadb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx\nadb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith\n\nIf the second command says \"Unknown package\", that device does not have it and nothing else is needed. The Home button then opens Big Screen. To bring Google TV back:\n\nadb shell pm enable com.google.android.apps.tv.launcherx\nadb shell pm enable com.google.android.tungsten.setupwraith\n\nOn Android TV without Google TV, pressing Home usually lets you pick Big Screen directly.</string>
+    <string name="default_text">Easiest way: turn on \"Home button opens Big Screen\" in the Big Screen settings, which opens Android Accessibility, and turn on Big Screen there. The Home button then opens Big Screen.\n\nTo replace the Google TV home completely, turn on developer options and network debugging on the TV and run these commands from a computer with adb:\n\nadb connect TV_IP\nadb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx\nadb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith\n\nIf the second command says \"Unknown package\", that device does not have it and nothing else is needed. To bring Google TV back:\n\nadb shell pm enable com.google.android.apps.tv.launcherx\nadb shell pm enable com.google.android.tungsten.setupwraith\n\nOn Android TV without Google TV, pressing Home usually lets you pick Big Screen directly.</string>
     <string name="ok">OK</string>
 </resources>

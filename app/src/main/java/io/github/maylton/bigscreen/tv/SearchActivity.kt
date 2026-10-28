@@ -61,6 +61,6 @@ class SearchActivity : Activity(), CardListener {
     }
 
     override fun onCardLongClick(card: Card) {
-        if (card is Card.App) Actions.options(this, card.entry) { load() }
+        if (card is Card.App) Actions.options(this, card.entry, onChanged = ::load)
     }
 }
